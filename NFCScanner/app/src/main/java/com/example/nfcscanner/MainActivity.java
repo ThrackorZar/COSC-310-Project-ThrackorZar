@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         locationRequest.setFastestInterval(1000 * 5);
         locationRequest.setPriority(locationRequest.PRIORITY_HIGH_ACCURACY);
 
+        //collects initial GPS location, and gives user prompt to use GPS location
+        UpdateGPS();
+
         //pull ip address variable value from MainActivityIpAddress
         Intent intent = getIntent();
         ipAddress = intent.getStringExtra("ip_address");
@@ -480,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
             finalData = stringNFCContent;
         }
         else {
-            finalData = (stringNFCContent + "," + intRoom + "," + access);
+            finalData = (stringNFCContent + "," + intRoom + "," + access + "," + currentLocationLat + "," + currentLocationLong);
         }
         sendData();
     }
