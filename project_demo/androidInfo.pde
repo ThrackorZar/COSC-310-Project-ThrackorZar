@@ -1,4 +1,4 @@
-public void androidInfo(String RN, String DTA, boolean a, String t) { //<>//
+public void androidInfo(String RN, String DTA, boolean a, String lat, String lng, String t) { //<>//
  if(RN.equals("FIRE") || RN.equals("INTRUDER") || RN.equals("GUEST") || RN.equals("EMPLOYEE") || RN.equals("CEO") || RN.equals("CONFERENCE") || RN.equals("UNKNOWN")){ //<>//
   Door door = new Door(RN, DTA, a, t); //<>//
   int d = day();    // Values from 1 - 31
@@ -107,12 +107,11 @@ public void androidInfo(String RN, String DTA, boolean a, String t) { //<>//
       break;
     }
   }
-  //"C:/Users/quirk/Desktop/COSC-310-Project/project_demo/database.csv";
   String dir = "./database.csv";
-  String[] head = {"RoleName", "DoorToAccess", "AccessStatus", "DATETIME"};
+  String[] head = {"RoleName", "DoorToAccess", "AccessStatus", "DATETIME", "latitude", "Longitude"};
   File tempFile = new File(dir);
   Boolean check = tempFile.exists();
-  String[] dis = {RN, DTA, String.valueOf(a), t};
+  String[] dis = {RN, DTA, String.valueOf(a), t, lat, lng};
   try(CSVWriter writer = new CSVWriter(new FileWriter(tempFile, true))) {
     if (check) {
       writer.writeNext(dis);
