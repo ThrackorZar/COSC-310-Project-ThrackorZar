@@ -21,6 +21,9 @@ import android.widget.Toast;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -41,11 +44,24 @@ public class MainActivity extends AppCompatActivity {
     int intRoom, intNFCContent;
     String ipAddress = "";
 
+    //allows for user location to be determined, absolutely essential to individual project
+    FusedLocationProviderClient fusedLocationProviderClient;
+
+    //location request, config file to determine settings required for FusedLocationProviderClient
+    LocationRequest locationRequest;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //set all properties of LocationRequest (Yes I know it's deprecated)
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1000 * 30);
+        locationRequest.setFastestInterval(1000 * 5);
+        locationRequest.setPriority(locationRequest.PRIORITY_HIGH_ACCURACY);
+        
         //pull ip address variable value from MainActivityIpAddress
         Intent intent = getIntent();
         ipAddress = intent.getStringExtra("ip_address");
