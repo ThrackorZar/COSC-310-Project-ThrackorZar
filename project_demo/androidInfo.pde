@@ -1,5 +1,5 @@
-public void androidInfo(String RN, String DTA, boolean a, String lat, String lng, String t) { //<>//
- if(RN.equals("FIRE") || RN.equals("INTRUDER") || RN.equals("GUEST") || RN.equals("EMPLOYEE") || RN.equals("CEO") || RN.equals("CONFERENCE") || RN.equals("UNKNOWN")){ //<>//
+public void androidInfo(String RN, String DTA, boolean a, String latlng, String t) { //<>//
+ if(RN.equals("FIRE") || RN.equals("INTRUDER") || RN.equals("GUEST") || RN.equals("EMPLOYEE") || RN.equals("CEO") || RN.equals("CONFERENCE") || RN.equals("UNKNOWN") || RN.equals("MAP")){ //<>//
   Door door = new Door(RN, DTA, a, t); //<>//
   int d = day();    // Values from 1 - 31
   int m = month();  // Values from 1 - 12
@@ -53,7 +53,7 @@ public void androidInfo(String RN, String DTA, boolean a, String lat, String lng
 
 
 
-  if ((!(mes.equals("FIRE")))&&(!(mes.equals("INTRUDER")))) { //this chunk of code should not run during special cases FIRE and INTRUDER
+  if ((!(mes.equals("FIRE")))&&(!(mes.equals("INTRUDER"))&&(!(mes.equals("MAP"))))) { //this chunk of code should not run during special cases FIRE and INTRUDER
     int doornum = Integer.parseInt(DTA);
     boolean tmp = door.getAccess();
     switch(doornum) {
@@ -107,11 +107,16 @@ public void androidInfo(String RN, String DTA, boolean a, String lat, String lng
       break;
     }
   }
+  
+  if (mes.equals("MAP")) {
+    //do nothing;
+  }
+  else {
   String dir = "./database.csv";
-  String[] head = {"RoleName", "DoorToAccess", "AccessStatus", "DATETIME", "latitude", "Longitude"};
+  String[] head = {"RoleName", "DoorToAccess", "AccessStatus", "DATETIME", "latlong"};
   File tempFile = new File(dir);
   Boolean check = tempFile.exists();
-  String[] dis = {RN, DTA, String.valueOf(a), t, lat, lng};
+  String[] dis = {RN, DTA, String.valueOf(a), t, latlng};
   try(CSVWriter writer = new CSVWriter(new FileWriter(tempFile, true))) {
     if (check) {
       writer.writeNext(dis);
@@ -124,6 +129,7 @@ public void androidInfo(String RN, String DTA, boolean a, String lat, String lng
   }
   catch(Exception e) {
     print(e);
+  }
   }
 }
 else{

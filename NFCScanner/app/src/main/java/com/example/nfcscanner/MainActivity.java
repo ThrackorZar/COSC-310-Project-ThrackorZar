@@ -20,8 +20,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ArrayAdapter;
@@ -30,10 +32,12 @@ import android.widget.Spinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_FINE_LOCATION = 0;
     Location currentLocation;
     double currentLocationLat, currentLocationLong;
+    ArrayList<LatLng> locationStoreLatLng = new ArrayList<LatLng>();
+
 
     //initialize required NFC variables
     Tag detectedTag;
@@ -101,6 +107,24 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         IntentFilter filter2 = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         readTagFilters = new IntentFilter[]{tagDetected, filter2};
+
+        //initialize show map button that will send special condition to proccessing of 'MAP'
+        Button buttonGenerateReport = findViewById(R.id.buttonShowMap);
+        buttonGenerateReport.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Map Opened!", Toast.LENGTH_SHORT);
+                toast.show();
+                collectData("MAP", intRoom, false);
+
+
+                Intent intentMaps = new Intent(MainActivity.this, MapsActivity.class);
+                intentMaps.putExtra("locationStoreLatLng", locationStoreLatLng);
+                startActivity(intentMaps);
+            }
+        });
+
     }
 
     //from AndroidManifest.xml, when NDEF tag discovered in intent filter
@@ -109,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         setIntent(intent);
         if (getIntent().getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
             detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
             readFromTag(getIntent());
         }
     }
@@ -147,9 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Location tempLocation) {
                     //Got Permissions, now what
-                    currentLocation = tempLocation;
-                    currentLocationLat = tempLocation.getLatitude();
-                    currentLocationLong = tempLocation.getLongitude();
+                    locationStoreLatLng.add(new LatLng(tempLocation.getLatitude(), tempLocation.getLongitude()));
                 }
             });
         }
@@ -477,13 +498,12 @@ public class MainActivity extends AppCompatActivity {
     private void collectData(String stringNFCContent, int intRoom, boolean access) {
         //collect current GPS long lat location
         UpdateGPS();
-        System.out.println(currentLocationLat + " " + currentLocationLong);
         //if emergency event, send only type of emergency and no door or access info
-        if (stringNFCContent.equals("FIRE") || stringNFCContent.equals("INTRUDER")) {
+        if (stringNFCContent.equals("FIRE") || stringNFCContent.equals("INTRUDER")|| stringNFCContent.equals("MAP")) {
             finalData = stringNFCContent;
         }
         else {
-            finalData = (stringNFCContent + "," + intRoom + "," + access + "," + currentLocationLat + "," + currentLocationLong);
+            finalData = (stringNFCContent + "," + intRoom + "," + access + "," + locationStoreLatLng);
         }
         sendData();
     }
