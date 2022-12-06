@@ -498,13 +498,12 @@ public class MainActivity extends AppCompatActivity {
     private void collectData(String stringNFCContent, int intRoom, boolean access) {
         //collect current GPS long lat location
         UpdateGPS();
-        System.out.println(currentLocationLat + " " + currentLocationLong);
         //if emergency event, send only type of emergency and no door or access info
         if (stringNFCContent.equals("FIRE") || stringNFCContent.equals("INTRUDER")|| stringNFCContent.equals("MAP")) {
             finalData = stringNFCContent;
         }
         else {
-            finalData = (stringNFCContent + "," + intRoom + "," + access + "," + currentLocationLat + "," + currentLocationLong);
+            finalData = (stringNFCContent + "," + intRoom + "," + access + "," + locationStoreLatLng);
         }
         sendData();
     }

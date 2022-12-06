@@ -50,10 +50,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         int i = locationStoreLatLng.size();
         LatLng location5 = new LatLng((locationStoreLatLng.get(i-1).latitude), (locationStoreLatLng.get(i-1).longitude));
-        LatLng location4 = new LatLng((locationStoreLatLng.get(i-2).latitude), (locationStoreLatLng.get(i-2).longitude));
-        LatLng location3 = new LatLng((locationStoreLatLng.get(i-3).latitude), (locationStoreLatLng.get(i-3).longitude));
-        LatLng location2 = new LatLng((locationStoreLatLng.get(i-4).latitude), (locationStoreLatLng.get(i-4).longitude));
-        LatLng location1 = new LatLng((locationStoreLatLng.get(i-5).latitude), (locationStoreLatLng.get(i-5).longitude));
+        LatLng location4 = new LatLng(((locationStoreLatLng.get(i-2).latitude)+1), ((locationStoreLatLng.get(i-2).longitude))+1);
+        LatLng location3 = new LatLng(((locationStoreLatLng.get(i-3).latitude)+2), ((locationStoreLatLng.get(i-3).longitude))+2);
+        LatLng location2 = new LatLng(((locationStoreLatLng.get(i-4).latitude)-2), ((locationStoreLatLng.get(i-4).longitude))-2);
+        LatLng location1 = new LatLng(((locationStoreLatLng.get(i-5).latitude)-1), ((locationStoreLatLng.get(i-5).longitude))-1);
 
 
         mMap.addMarker(new MarkerOptions().position(location5).title("Location 5"));
