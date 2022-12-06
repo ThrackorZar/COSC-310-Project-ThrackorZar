@@ -14,7 +14,7 @@ FusedLocationProviderClient was used to determine and retrieve the users current
 - It is stored locally on the android device running the NFCScanner application to be used with the new Google Maps Functionality
 - It is sent along wiht the access attempt info to the project_demo application made in processing, where the users location is then stored along with previously stored data in an excel log file
 
-   ![User Lat / Long position being recorded](/Assets/Images/screenshot-latlong.jpg)
+   ![User Lat / Long position being recorded](/Assets/Images/screenshot-latlong.JPG)
    
 
 ## Google Maps (Google.Maps.GoogleMaps)
