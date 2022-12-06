@@ -52,13 +52,13 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/buttonGenerateReport"
+            android:id="@+id/buttonShowMap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="158dp"
             android:layout_marginEnd="159dp"
             android:layout_marginBottom="49dp"
-            android:text="Generate Report"
+            android:text="ShowMap"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

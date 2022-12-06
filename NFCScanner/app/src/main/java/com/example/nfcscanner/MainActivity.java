@@ -32,10 +32,12 @@ import android.widget.Spinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_FINE_LOCATION = 0;
     Location currentLocation;
     double currentLocationLat, currentLocationLong;
+    ArrayList<LatLng> locationStoreLatLng = new ArrayList<LatLng>();
+
 
     //initialize required NFC variables
     Tag detectedTag;
@@ -104,15 +108,20 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter2 = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         readTagFilters = new IntentFilter[]{tagDetected, filter2};
 
-        //initialize generate report button that will send special string variable to processing over network socket to generate PDF file report of all access attempts found in excel log
-        Button buttonGenerateReport = findViewById(R.id.buttonGenerateReport);
+        //initialize show map button that will send special condition to proccessing of 'MAP'
+        Button buttonGenerateReport = findViewById(R.id.buttonShowMap);
         buttonGenerateReport.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Report generated, check root directory of processing!", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "Map Opened!", Toast.LENGTH_SHORT);
                 toast.show();
-                collectData("REPORT", intRoom, false);
+                collectData("MAP", intRoom, false);
+
+
+                Intent intentMaps = new Intent(MainActivity.this, MapsActivity.class);
+                intentMaps.putExtra("locationStoreLatLng", locationStoreLatLng);
+                startActivity(intentMaps);
             }
         });
 
@@ -124,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         setIntent(intent);
         if (getIntent().getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
             detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
             readFromTag(getIntent());
         }
     }
@@ -162,9 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Location tempLocation) {
                     //Got Permissions, now what
-                    currentLocation = tempLocation;
-                    currentLocationLat = tempLocation.getLatitude();
-                    currentLocationLong = tempLocation.getLongitude();
+                    locationStoreLatLng.add(new LatLng(tempLocation.getLatitude(), tempLocation.getLongitude()));
                 }
             });
         }
@@ -494,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
         UpdateGPS();
         System.out.println(currentLocationLat + " " + currentLocationLong);
         //if emergency event, send only type of emergency and no door or access info
-        if (stringNFCContent.equals("FIRE") || stringNFCContent.equals("INTRUDER")|| stringNFCContent.equals("REPORT")) {
+        if (stringNFCContent.equals("FIRE") || stringNFCContent.equals("INTRUDER")|| stringNFCContent.equals("MAP")) {
             finalData = stringNFCContent;
         }
         else {

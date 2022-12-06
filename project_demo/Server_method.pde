@@ -21,8 +21,8 @@ public void ServerMethod(String message) {
     col_bathroom_2 = b;
     col_conference =b;
     androidInfo("INTRUDER", "", false, "", "", ""); //DoorToAccess variable is not relevant for this special case. DATETIME variable will still be calculated in androidInfo
-  } else if (mes.equals("REPORT")) { //During REPORT Special case, no door change but report is sent to android info to be parsed //<>//
-    androidInfo("REPORT", "", false, "", "", ""); //DoorToAccess variable is not relevant for this special case. DATETIME variable will still be calculated in androidInfo
+  } else if (mes.equals("MAP")) { //During MAP Special case, no door change but message is sent to android info to be parsed //<>//
+    androidInfo("MAP", "", false, "", "", ""); //DoorToAccess variable is not relevant for this special case. DATETIME variable will still be calculated in androidInfo
   } else {
     try{
     androidInfo(arr[0], arr[1], parseBoolean(arr[2]), arr[3], arr[4], ""); //DATETIME IS CALCULATED within androidInfo
