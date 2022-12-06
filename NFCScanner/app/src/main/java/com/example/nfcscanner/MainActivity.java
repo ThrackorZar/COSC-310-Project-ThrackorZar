@@ -20,8 +20,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ArrayAdapter;
@@ -101,6 +103,19 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         IntentFilter filter2 = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         readTagFilters = new IntentFilter[]{tagDetected, filter2};
+
+        //initialize generate report button that will send special string variable to processing over network socket to generate PDF file report of all access attempts found in excel log
+        Button buttonGenerateReport = findViewById(R.id.buttonGenerateReport);
+        buttonGenerateReport.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Report generated, check root directory of processing!", Toast.LENGTH_SHORT);
+                toast.show();
+                collectData("REPORT", intRoom, false);
+            }
+        });
+
     }
 
     //from AndroidManifest.xml, when NDEF tag discovered in intent filter
@@ -479,7 +494,7 @@ public class MainActivity extends AppCompatActivity {
         UpdateGPS();
         System.out.println(currentLocationLat + " " + currentLocationLong);
         //if emergency event, send only type of emergency and no door or access info
-        if (stringNFCContent.equals("FIRE") || stringNFCContent.equals("INTRUDER")) {
+        if (stringNFCContent.equals("FIRE") || stringNFCContent.equals("INTRUDER")|| stringNFCContent.equals("REPORT")) {
             finalData = stringNFCContent;
         }
         else {
