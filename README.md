@@ -15,6 +15,7 @@ FusedLocationProviderClient was used to determine and retrieve the users current
 - It is sent along wiht the access attempt info to the project_demo application made in processing, where the users location is then stored along with previously stored data in an excel log file
 
    ![User Lat / Long position being recorded](/Assets/Images/screenshot-latlong.jpg)
+   
 
 ## Google Maps (Google.Maps.GoogleMaps)
 
@@ -22,6 +23,7 @@ GoogleMaps, along with a API key provided through googles online developer porta
 
 - For the purpose of demonstration, each point was offset between +2, +2 to -2, -2 as demonstration location would be the same for all scans when demenstration video was being created
 
+   ![new show map button](/Assets/Images/screenshot-showmapbutton.jpg)
    ![5 newest access attempts with offset](/Assets/Images/screenshot-map.jpg)
 
 # What is our project?
