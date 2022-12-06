@@ -1,17 +1,23 @@
 package com.example.nfcscanner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.animation.AlphaAnimation;
@@ -21,10 +27,20 @@ import android.widget.Toast;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.io.*;
 import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
+
+    //initialize required variables for location services
+    private static final int PERMISSIONS_FINE_LOCATION = 0;
+    Location currentLocation;
+    double currentLocationLat, currentLocationLong;
 
     //initialize required NFC variables
     Tag detectedTag;
@@ -41,10 +57,26 @@ public class MainActivity extends AppCompatActivity {
     int intRoom, intNFCContent;
     String ipAddress = "";
 
+    //allows for user location to be determined, absolutely essential to individual project
+    FusedLocationProviderClient fusedLocationProviderClient;
+
+    //location request, config file to determine settings required for FusedLocationProviderClient
+    LocationRequest locationRequest;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //set all properties of LocationRequest (Yes I know it's deprecated)
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1000 * 30);
+        locationRequest.setFastestInterval(1000 * 5);
+        locationRequest.setPriority(locationRequest.PRIORITY_HIGH_ACCURACY);
+
+        //collects initial GPS location, and gives user prompt to use GPS location
+        UpdateGPS();
 
         //pull ip address variable value from MainActivityIpAddress
         Intent intent = getIntent();
@@ -88,6 +120,45 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         //enable NFC scanning in backround during app runtime
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, readTagFilters, null);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case PERMISSIONS_FINE_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    UpdateGPS();
+                } else {
+                    Toast.makeText(this, "App requires location permission to run", Toast.LENGTH_SHORT).show();
+                    finish();
+            }
+        }
+    }
+
+    private void UpdateGPS() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+
+        //run check to determine if permission has been granted to determine users location using FusedLocationProviderClient
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            //do nothing
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location tempLocation) {
+                    //Got Permissions, now what
+                    currentLocation = tempLocation;
+                    currentLocationLat = tempLocation.getLatitude();
+                    currentLocationLong = tempLocation.getLongitude();
+                }
+            });
+        }
+        else {
+            //if not, request permission from user
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
+            }
+        }
     }
 
     //reads raw data from NDEF NFC tag, and translates it from byte data to String variable named 'stringNFCContent'
@@ -404,12 +475,15 @@ public class MainActivity extends AppCompatActivity {
     //collects individual data from access attempt (NFC Card data, room accessed, and if attempt was successful
     //stores data into single string finalData to be sent to sendData()
     private void collectData(String stringNFCContent, int intRoom, boolean access) {
+        //collect current GPS long lat location
+        UpdateGPS();
+        System.out.println(currentLocationLat + " " + currentLocationLong);
         //if emergency event, send only type of emergency and no door or access info
         if (stringNFCContent.equals("FIRE") || stringNFCContent.equals("INTRUDER")) {
             finalData = stringNFCContent;
         }
         else {
-            finalData = (stringNFCContent + "," + intRoom + "," + access);
+            finalData = (stringNFCContent + "," + intRoom + "," + access + "," + currentLocationLat + "," + currentLocationLong);
         }
         sendData();
     }

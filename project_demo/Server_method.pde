@@ -10,7 +10,7 @@ public void ServerMethod(String message) {
     col_bathroom_1 = g;
     col_bathroom_2 = g;
     col_conference =g;
-    androidInfo("FIRE", "", false, ""); //DoorToAccess variable is not relevant for this special case. DATETIME variable will still be calculated in androidInfo
+    androidInfo("FIRE", "", false, "", "", ""); //DoorToAccess variable is not relevant for this special case. DATETIME variable will still be calculated in androidInfo
   } else if (mes.equals("INTRUDER")) { //During INTRUDER special case, all doors turn blue indefinitely
     col_main = b;
     col_kitchen = b;
@@ -20,10 +20,10 @@ public void ServerMethod(String message) {
     col_bathroom_1 = b;
     col_bathroom_2 = b;
     col_conference =b;
-    androidInfo("INTRUDER", "", false, ""); //DoorToAccess variable is not relevant for this special case. DATETIME variable will still be calculated in androidInfo
+    androidInfo("INTRUDER", "", false, "", "", ""); //DoorToAccess variable is not relevant for this special case. DATETIME variable will still be calculated in androidInfo
   } else { //<>//
     try{
-    androidInfo(arr[0], arr[1], parseBoolean(arr[2]), ""); //DATETIME IS CALCULATED within androidInfo
+    androidInfo(arr[0], arr[1], parseBoolean(arr[2]), arr[3], arr[4], ""); //DATETIME IS CALCULATED within androidInfo
     }catch(Exception e){
       System.out.println(e);
       System.out.println("Invalid code. Please get your NFC card checked out by IT");
