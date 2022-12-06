@@ -5,6 +5,25 @@
 - Jaden Edgar
 - Kyra Barnes
 
+# Features added for Individual Project
+
+## Device GPS Location (Google.Location.FusedLocationProviderClient)
+
+FusedLocationProviderClient was used to determine and retrieve the users current latitude and longitude position, using a mix of wifi locations, telephone towers, and built in satallite GPS navigation. When the function UpdateGPS(); is called, the users current location is retrieved and then stored as a LatLng variable. This Variable is then used in two ways:
+
+- It is stored locally on the android device running the NFCScanner application to be used with the new Google Maps Functionality
+- It is sent along wiht the access attempt info to the project_demo application made in processing, where the users location is then stored along with previously stored data in an excel log file
+
+   ![User Lat / Long position being recorded](/Assets/Images/screenshot-latlong.jpg)
+
+## Google Maps (Google.Maps.GoogleMaps)
+
+GoogleMaps, along with a API key provided through googles online developer portal was used to implement an on screen map functionality that the user can access at any time by pressing the 'view map' button on the NFCScanner applications Main Activity. As previously mentioned, the NFCScanner application stores the location of every attempt made when scanning an NFC Card, successful or not. It then uses the 5 most recent locations of each scan, and creates LatLng variables to be used with Google maps to display each location on a google map view as a pin drop, with each one being labelled as location 1-5 respectfully.
+
+- For the purpose of demonstration, each point was offset between +2, +2 to -2, -2 as demonstration location would be the same for all scans when demenstration video was being created
+
+   ![5 newest access attempts with offset](/Assets/Images/screenshot-map.jpg)
+
 # What is our project?
 
 Office Security System is a dual computer project utilising both locally run android studio and processing java applications to emulate a redimentary office building security system. The android studio java application will be emulating a NFC card reader with variable permissions depending on which employee of the office attempts to gain access, and the room in which the employee is attempting to enter. The processing java application will reflect these attempted actions by the employee by showing a top down view of the office building floor layout, and represent granted access into a certain room by showing a dynamic door that change color when access is granted.
